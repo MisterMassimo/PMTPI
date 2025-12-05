@@ -208,7 +208,11 @@ function onMapClick(e) {
                     lat: lat,
                     lng: lng,
                     title: titleVal,
-                    coord: `${lat}|${lng}`
+                    coord: `${lat}|${lng}`,
+                    coordinate: {
+                     lat: lat,
+                     lon: lng
+                }   
                 })
             })
             .then(res => {
