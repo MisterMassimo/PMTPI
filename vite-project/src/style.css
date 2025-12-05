@@ -1,0 +1,129 @@
+html, body, #app {
+    height: 100vh;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    max-width: none;
+    margin: 0;
+    padding: 0; 
+    background-color: #f5f5f5;
+    display: block;
+}
+
+#app {
+    box-sizing: border-box;
+    padding: 20px; 
+    height: 100vh; 
+    overflow: hidden;
+}
+
+.container {
+    display: flex;
+    gap: 20px;
+    align-items: stretch;
+    height: calc(100% - 56px); 
+}
+
+.colonna {
+    flex: 0 0 380px; 
+    border: 1px solid #ccc;
+    padding: 15px;
+    border-radius: 5px; 
+    background-color: white;
+    height: 100%;
+    overflow: auto;
+}
+
+.mappa {
+    flex: 1 1 auto; /* occupa lo spazio rimanente a destra */
+    min-height: 0; 
+    height: 100%;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+input, textarea {
+    width: 100%;
+    margin: 5px 0;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+}
+
+button {
+    padding: 8px 15px;
+    margin: 5px;
+    cursor: pointer;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 3px;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+ul {
+    list-style: none;
+    padding: 0;
+}
+
+li {
+    padding: 8px;
+    margin: 5px 0;
+    background: #f8f9fa;
+    border-radius: 3px;
+    cursor: pointer;
+    border-left: 4px solid #007bff;
+}
+
+.done {
+    background: #d4edda;
+    text-decoration: line-through;
+    border-left-color: #28a745;
+}
+
+.appunto-item {
+    border: 1px solid #ddd;
+    padding: 10px;
+    margin: 5px 0;
+    border-radius: 3px;
+    background-color: #f8f9fa;
+}
+
+.appunto-item button {
+    background-color: #dc3545;
+    padding: 5px 10px;
+    font-size: 12px;
+}
+
+.appunto-item button:hover {
+    background-color: #c82333;
+}
+
+#map {
+    height: 100%;
+    width: 100%;
+}
+
+/* Responsive: su schermi stretti impila colonna e mappa */
+@media (max-width: 800px) {
+    .container {
+        flex-direction: column;
+        height: auto;
+    }
+    .colonna {
+        flex: 1 1 auto;
+        max-height: none;
+        height: auto;
+    }
+    .mappa {
+        height: 300px;
+    }
+}
+

@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Appunti</title>
+    <link rel="stylesheet" href="src/style.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+     integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+     crossorigin=""/>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+     crossorigin=""></script> 
+  </head>
+  <body>
+    <div id="app">  
+      <h1> DOVE DEVO ANDARE PER IL VIAGGIO!!!</h1>
+
+    <div class="container">
+        <div class="colonna">
+            <h2>LUOGO</h2>
+            <input type="text" id="searchInput" placeholder="Cerca per nome..." />
+            <select id="filterSelect" aria-label="Filtra punti">
+                <option value="all">Tutti</option>
+                <option value="raggiunti">Raggiunti</option>
+                <option value="non_raggiunti">Non raggiunti</option>
+            </select>
+            <div id="listaAppunti"></div>
+        </div>
+
+        <div id="map" class="mappa"></div>
+
+    </div>
+    </div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
+
