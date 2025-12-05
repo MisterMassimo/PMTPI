@@ -18,14 +18,12 @@ setTimeout(() => {
 const luoghiLayer = L.layerGroup().addTo(map);  
 
 function caricaLuoghiDaPB() {
-    // prima carica i record
+    
     fetch('http://127.0.0.1:8090/api/collections/LUOGO/records')
       .then(r => r.json())
       .then(recordsData => {
-        // poi prova a caricare gli stati (se fallisce usa array vuoto)
         fetch('http://127.0.0.1:8090/api/collections/LUOGO/stato')
           .then(r => r.json())
-          .catch(() => ({ items: [] }))
           .then(statoData => {
             luoghiLayer.clearLayers();
             listaAppunti.innerHTML = '';
@@ -47,7 +45,6 @@ function caricaLuoghiDaPB() {
                 const title = item.title || item.coord || 'Punto salvato';
                 const stato = (statoMap.has(item.id) ? statoMap.get(item.id) : (item.stato || 'non aggiunto'));
 
-                // applica filtro: se non corrisponde, salta
                 if (currentFilter === 'raggiunti' && stato !== 'aggiunto') continue;
                 if (currentFilter === 'non_raggiunti' && stato === 'aggiunto') continue;
 
@@ -64,7 +61,7 @@ function caricaLuoghiDaPB() {
                     const delBtn = document.createElement('button');
                     delBtn.textContent = 'Elimina';
                     delBtn.style.marginLeft = '8px';
-                    delBtn.onclick = (ev) => { ev.stopPropagation(); if (!item.id) return; fetch(`http://127.0.0.1:8090/api/collections/LUOGO/records/${item.id}`, { method: 'DELETE' }).then(() => caricaLuoghiDaPB()).catch(()=>{}); };
+                    delBtn.onclick = (ev) => { ev.stopPropagation(); if (!item.id) return; fetch(`http://127.0.0.1:8090/api/collections/LUOGO/records/${item.id}`, { method: 'DELETE' }).then(() => caricaLuoghiDaPB()); };
                     div.appendChild(delBtn);
 
                     // bottone toggle stato (usa PATCH sul record LUOGO)
@@ -79,7 +76,7 @@ function caricaLuoghiDaPB() {
                             method: 'PATCH',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify({ stato: nuovo })
-                        }).then(res => { if (res.ok) caricaLuoghiDaPB(); }).catch(()=>{});
+                        }).then(res => { if (res.ok) caricaLuoghiDaPB(); });
                     };
                     div.appendChild(statoBtn);
 
