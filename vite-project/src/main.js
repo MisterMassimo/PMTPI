@@ -54,7 +54,10 @@ function caricaLuoghiDaPB() {
                     const div = document.createElement('div');
                     div.className = 'appunto-item';
                     if (stato === 'aggiunto') div.style.backgroundColor = '#d4edda';
-                    div.innerHTML = `<strong>${escapeHtml(title)}</strong><br/>${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+                    // mostra anche il campo country se disponibile
+                    let contentHtml = `<strong>${escapeHtml(title)}</strong><br/>${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+                    if (item.country) contentHtml += `<br/><small>${escapeHtml(item.country)}</small>`;
+                    div.innerHTML = contentHtml;
                     div.style.cursor = 'pointer';
 
 
@@ -135,7 +138,10 @@ if (searchInput) {
 
               const div = document.createElement('div');
               div.className = 'appunto-item';
-              div.innerHTML = `<strong>${escapeHtml(title)}</strong><br/>${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+              // mostra anche il campo country se disponibile nella ricerca
+              let contentHtml = `<strong>${escapeHtml(title)}</strong><br/>${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+              if (item.country) contentHtml += `<br/><small>${escapeHtml(item.country)}</small>`;
+              div.innerHTML = contentHtml;
               div.style.cursor = 'pointer';
 
               const delBtn = document.createElement('button');
@@ -199,26 +205,38 @@ function onMapClick(e) {
             if (status) status.textContent = '';
             const titleVal = titleInput ? titleInput.value.trim() : '';
 
-            fetch('http://127.0.0.1:8090/api/collections/LUOGO/records', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    lat: lat,
-                    lng: lng,
-                    title: titleVal,
-                    coord: `${lat}|${lng}`,
-                    coordinate: {
-                     lat: lat,
-                     lon: lng
-                }   
-                })
+            // prima del salvataggio facciamo reverse-geocoding per ottenere il paese (country)
+            fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${encodeURIComponent(lat)}&lon=${encodeURIComponent(lng)}&accept-language=it`)
+            .then(r => r.ok ? r.json() : null)
+            .then(geo => {
+                let countryName = '';
+                if (geo && geo.address) {
+                    // preferiamo country, altrimenti proviamo state/region
+                    countryName = geo.address.country || geo.address.state || geo.address.region || '';
+                }
+                return fetch('http://127.0.0.1:8090/api/collections/LUOGO/records', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        lat: lat,
+                        lng: lng,
+                        title: titleVal,
+                        coord: `${lat}|${lng}`,
+                        coordinate: {
+                            lat: lat,
+                            lon: lng
+                        },
+                        country: countryName
+                    })
+                });
             })
             .then(res => {
-                if (!res.ok) {
+                if (!res || !res.ok) {
                     newBtn.disabled = false;
                     newBtn.textContent = 'Salva coordinate';
+                    if (status) status.textContent = 'Errore durante il reverse-geocoding o il salvataggio.';
                     return null;
                 }
                 return res.json();
@@ -226,10 +244,16 @@ function onMapClick(e) {
             .then(result => {
                 if (!result) return;
                 caricaLuoghiDaPB();
-                map.closePopup(); 
+                map.closePopup();
                 newBtn.disabled = false;
                 newBtn.textContent = 'Salvato';
             })
+            .catch(err => {
+                console.error(err);
+                newBtn.disabled = false;
+                newBtn.textContent = 'Salva coordinate';
+                if (status) status.textContent = 'Errore di rete durante il salvataggio.';
+            });
         });
     }, 50);
 }
